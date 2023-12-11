@@ -362,8 +362,15 @@ namespace ResumeCreator
         {
             container.Column(column =>
             {
-                column.Item().Text(Title).FontSize(TitleFontSize);
-                column.Item().PaddingBottom(3).Text(SubTitle).FontSize(SubTitleFontSize).FontColor(Colors.Grey.Darken3);
+                if (!string.IsNullOrEmpty(SubTitle))
+                {
+                    column.Item().Text(Title).FontSize(TitleFontSize);
+                    column.Item().PaddingBottom(3).Text(SubTitle).FontSize(SubTitleFontSize).FontColor(Colors.Grey.Darken3);
+                }
+                else
+                {
+                    column.Item().PaddingBottom(3).Text(Title).FontSize(TitleFontSize);
+                }
 
                 foreach (var detail in Details)
                 {
