@@ -1,7 +1,5 @@
 ﻿using QuestPDF.Fluent;
 using QuestPDF.Infrastructure;
-using QuestPDF.Previewer;
-using System.Diagnostics;
 using System.Text.Json;
 
 namespace ResumeCreator
@@ -12,10 +10,48 @@ namespace ResumeCreator
         {
             QuestPDF.Settings.License = LicenseType.Community;
 
-            var exampleModel = GenerateExampleJson();
-            SaveModelJson("example.json", exampleModel);
 
-            GeneratePdf(exampleModel);
+            bool flag = true;
+            while (flag)
+            {
+                Console.WriteLine("Select an option to procced:");
+                Console.WriteLine("1. Generate an example json & pdf");
+                Console.WriteLine("2. Generate a pdf from existing json");
+                var input = Console.ReadKey().KeyChar;
+                Console.Clear();
+
+                switch (input)
+                {
+                    case '1':
+                        {
+                            var exampleModel = GenerateExampleJson();
+                            SaveModelJson("example.json", exampleModel);
+
+                            GeneratePdf(exampleModel);
+
+                            flag = false;
+                            break;
+                        }
+                    case '2':
+                        {
+                            Console.Write("Enter the full path to the .json file: ");
+                            var path = Console.ReadLine();
+
+                            if (File.Exists(path))
+                            {
+                                var model = ReadModelJson(path);
+                                GeneratePdf(model);
+                                flag = false;
+                            }
+                            else Console.WriteLine("Provided file is inaccessible or doesn't exist.");
+
+                            break;
+                        }
+                }
+            }
+
+            Console.WriteLine("Press any key to exit.");
+            Console.ReadKey();
         }
 
         static ResumeModel GenerateExampleJson()
@@ -119,8 +155,6 @@ namespace ResumeCreator
 
             var document = new ResumeDocument(model);
             document.GeneratePdf(filePath);
-
-            Process.Start("explorer.exe", filePath);
         }
     }
 }
