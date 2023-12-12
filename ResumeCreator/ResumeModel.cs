@@ -92,7 +92,7 @@ namespace ResumeCreator
     {
         public string Text { get; set; } = string.Empty;
         public string? HyperLink { get; set; }
-        public byte[]? Icon { get; set; }
+        public string? Icon { get; set; }
     }
 
     public class WorkExperienceDetails

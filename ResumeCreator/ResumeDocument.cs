@@ -1,9 +1,24 @@
 ﻿using QuestPDF.Fluent;
 using QuestPDF.Helpers;
 using QuestPDF.Infrastructure;
+using Svg.Skia;
 
 namespace ResumeCreator
 {
+    public static class SvgExtensions
+    {
+        public static void Svg(this IContainer container, SKSvg svg)
+        {
+            container
+                .AlignCenter()
+                .AlignMiddle()
+                .ScaleToFit()
+                .Width(svg.Picture.CullRect.Width)
+                .Height(svg.Picture.CullRect.Height)
+                .Canvas((canvas, space) => canvas.DrawPicture(svg.Picture));
+        }
+    }
+
     public class ResumeDocument : IDocument
     {
         // constants
@@ -226,13 +241,20 @@ namespace ResumeCreator
         {
             container.Row(row =>
             {
-                if (Feature.Icon != null)
+                if (!File.Exists(Feature.Icon))
                 {
-                    row.ConstantItem(10).AlignMiddle().Image(Feature.Icon);
+                    row.ConstantItem(15);
+                }
+                else if (Feature.Icon.EndsWith(".svg", StringComparison.OrdinalIgnoreCase))
+                {
+                    var svg = new SKSvg();
+                    svg.Load(Feature.Icon);
+
+                    row.ConstantItem(15).AlignMiddle().Svg(svg);
                 }
                 else
                 {
-                    row.ConstantItem(10);
+                    row.ConstantItem(15).AlignMiddle().Image(Feature.Icon);
                 }
 
                 if (Feature.HyperLink != null)
@@ -271,7 +293,7 @@ namespace ResumeCreator
 
                 foreach (var item in Items)
                 {
-                    column.Item().Component(new FeatureItemComponent(item));
+                    column.Item().PaddingBottom(3).Component(new FeatureItemComponent(item));
                 }
             });
         }
