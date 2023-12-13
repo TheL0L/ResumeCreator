@@ -63,17 +63,20 @@ namespace ResumeCreator
                 {
                     new FeatureItem
                     {
-                        Text = "+000 00 000 0000"
+                        Text = "+000 00 000 0000",
+                        Icon = "Icons/phone.svg"
                     },
                     new FeatureItem
                     {
                         Text = "email@domain.com",
-                        HyperLink = "mailto:email@domain.com"
+                        HyperLink = "mailto:email@domain.com",
+                        Icon = "Icons/email.svg"
                     },
                     new FeatureItem
                     {
                         Text = "github",
-                        HyperLink = "https://github.com/"
+                        HyperLink = "https://github.com/",
+                        Icon = "Icons/github.svg"
                     }
                 },
                 Languages = new List<string>
