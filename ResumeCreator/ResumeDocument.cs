@@ -218,6 +218,8 @@ namespace ResumeCreator
 
         private void ComposeMilitarySection(IContainer container)
         {
+            if (military.Count == 0) return;
+
             var block = new ExperienceCollectionBlock(
                 "Military Service",
                 Model.FontSizeBlockMajorTitle,
