@@ -2,22 +2,13 @@
 using QuestPDF.Infrastructure;
 using QuestPDF.Previewer;
 using System.Text.Json;
+using System.Text.Json.Serialization;
 
 namespace ResumeCreator
 {
     class Program
     {
         static void Main(string[] args)
-        {
-            QuestPDF.Settings.License = LicenseType.Community;
-            SaveModelJson("example_new.json", GenerateExampleJson());
-
-            var model = ReadModelJson("t.json");
-            var document = new ResumeDocument(model);
-            document.GeneratePdf("resume_test.pdf");
-        }
-
-        static void Main1(string[] args)
         {
             QuestPDF.Settings.License = LicenseType.Community;
 
@@ -153,8 +144,17 @@ namespace ResumeCreator
 
         static void SaveModelJson(string path, ResumeModel model)
         {
+            // Setup the serializer options
+            var SerializerOptions = new JsonSerializerOptions
+            {
+                Converters = { new JsonStringEnumConverter() },
+                DefaultIgnoreCondition = JsonIgnoreCondition.Never,
+                PropertyNameCaseInsensitive = true,
+                WriteIndented = true
+            };
+
             // Serialize the object to a JSON string
-            string jsonString = JsonSerializer.Serialize(model, new JsonSerializerOptions { WriteIndented = true });
+            string jsonString = JsonSerializer.Serialize(model, SerializerOptions);
 
             // Write the JSON string to a file
             File.WriteAllText(path, jsonString);
