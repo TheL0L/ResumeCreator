@@ -230,6 +230,25 @@ namespace ResumeCreator
         }
     }
 
+    public class BulletPoint : IComponent
+    {
+        private string Text;
+
+        public BulletPoint(string text)
+        {
+            Text = text;
+        }
+
+        public void Compose(IContainer container)
+        {
+            container.Row(row =>
+            {
+                row.AutoItem().Text("•");
+                row.RelativeItem().PaddingLeft(3).Text(Text);
+            });
+        }
+    }
+
     public class FeatureItemComponent : IComponent
     {
         private FeatureItem Feature { get; }
@@ -398,7 +417,7 @@ namespace ResumeCreator
 
                 foreach (var detail in Details)
                 {
-                    column.Item().Text($"• {detail}");
+                    column.Item().Component(new BulletPoint(detail));
                 }
             });
         }
