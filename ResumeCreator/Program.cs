@@ -10,6 +10,8 @@ namespace ResumeCreator
         static void Main(string[] args)
         {
             QuestPDF.Settings.License = LicenseType.Community;
+            SaveModelJson("example_new.json", GenerateExampleJson());
+
             var model = ReadModelJson("t.json");
             var document = new ResumeDocument(model);
             document.GeneratePdf("resume_test.pdf");
@@ -129,7 +131,7 @@ namespace ResumeCreator
                         Position = "Technician",
                         Branch = "Tech Corps",
                         DateSpan = "Jan 2000 - Dec 2003",
-                        Description = new List<string>
+                        DescriptionItems = new List<string>
                         {
                             "Some details about the service period.",
                         }

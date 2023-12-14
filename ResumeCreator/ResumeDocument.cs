@@ -440,7 +440,7 @@ namespace ResumeCreator
         {
             Title = data.GetHeader();
             SubTitle = data.DateSpan;
-            Details = data.Description;
+            Details = data.DescriptionItems;
         }
     }
 

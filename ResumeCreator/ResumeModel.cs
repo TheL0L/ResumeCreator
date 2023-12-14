@@ -8,22 +8,22 @@ namespace ResumeCreator
 
     public class DocumentColors
     {
-        public string Header = "35373d";
-        public string BodyDetails = "e9e2dd";
-        public string BodyMain = "ffffff";
+        public string Header { get; set; } = "35373d";
+        public string BodyDetails { get; set; } = "e9e2dd";
+        public string BodyMain { get; set; } = "ffffff";
     }
 
     public class DocumentProportions
     {
-        public float BodyDetails = 1;
-        public float BodyMain = 2;
+        public float BodyDetails { get; set; } = 1;
+        public float BodyMain { get; set; } = 2;
     }
 
 
     public class ResumeModel
     {
         public TextDirection TextDirection = TextDirection.LeftToRight;
-        public string FontFamily { get; set; } = "Arial";  // "Rubik" for hebrew
+        public string FontFamily { get; set; } = "Arial";
         public int FontSizeDefault { get; set; } = 10;
         public int FontSizeBlockSubTitle { get; set; } = 8;
         public int FontSizeBlockTitle { get; set; } = 12;
@@ -76,7 +76,7 @@ namespace ResumeCreator
         public string Position { get; set; } = string.Empty;
         public string Branch { get; set; } = string.Empty;
         public string? DateSpan { get; set; }
-        public List<string> Description { get; set; } = new List<string>();
+        public List<string> DescriptionItems { get; set; } = new List<string>();
 
         public string GetHeader()
         {
