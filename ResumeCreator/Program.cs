@@ -1,5 +1,6 @@
 ﻿using QuestPDF.Fluent;
 using QuestPDF.Infrastructure;
+using QuestPDF.Previewer;
 using System.Text.Json;
 
 namespace ResumeCreator
@@ -7,6 +8,14 @@ namespace ResumeCreator
     class Program
     {
         static void Main(string[] args)
+        {
+            QuestPDF.Settings.License = LicenseType.Community;
+            var model = ReadModelJson("t.json");
+            var document = new ResumeDocument(model);
+            document.GeneratePdf("resume_test.pdf");
+        }
+
+        static void Main1(string[] args)
         {
             QuestPDF.Settings.License = LicenseType.Community;
 
@@ -89,8 +98,7 @@ namespace ResumeCreator
                     {
                         Major = "Degree of Some Major",
                         Facility = "Some Facility",
-                        StartDate = new MonthYear(1, 2000),
-                        EndDate = new MonthYear(1, 2004),
+                        DateSpan = "Jan 2000 - Dec 2004",
                     },
                 },
                 ExtraCourses = new List<string>
@@ -120,8 +128,7 @@ namespace ResumeCreator
                     {
                         Position = "Technician",
                         Branch = "Tech Corps",
-                        StartDate = new MonthYear(1, 2000),
-                        EndDate = new MonthYear(1, 2003),
+                        DateSpan = "Jan 2000 - Dec 2003",
                         Description = new List<string>
                         {
                             "Some details about the service period.",

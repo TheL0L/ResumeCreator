@@ -28,7 +28,6 @@ namespace ResumeCreator
         private const float _blocksPadding_BodyDetails = 15;  // horizontal margins for BodyDetails elements.
         private const float _blocksPadding_BodyMain = 15;  // horizontal margins for BodyMain elements.
 
-
         // content blocks
         private PersonalBlock personalInfo;
         private ContentBlock languages;
@@ -347,9 +346,9 @@ namespace ResumeCreator
                         column.Item().PaddingLeft(3).Text(item.Facility);
                     }
 
-                    if (!string.IsNullOrEmpty(item.GetDate()))
+                    if (!string.IsNullOrEmpty(item.DateSpan))
                     {
-                        column.Item().PaddingLeft(3).Text(item.GetDate());
+                        column.Item().PaddingLeft(3).Text(item.DateSpan);
                     }
 
                     column.Item().PaddingBottom(10);
@@ -429,7 +428,7 @@ namespace ResumeCreator
             : base(titleFontSize, subTitleFontSize)
         {
             Title = data.GetHeader();
-            SubTitle = data.GetDate();
+            SubTitle = data.DateSpan;
             Details = data.DescriptionItems;
         }
     }
@@ -440,7 +439,7 @@ namespace ResumeCreator
             : base(titleFontSize, subTitleFontSize)
         {
             Title = data.GetHeader();
-            SubTitle = data.GetDate();
+            SubTitle = data.DateSpan;
             Details = data.Description;
         }
     }

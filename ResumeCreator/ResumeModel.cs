@@ -45,49 +45,6 @@ namespace ResumeCreator
 
     }
 
-
-    public class MonthYear
-    {
-        public int Month { get; set; }
-        public int Year { get; set; }
-
-        public MonthYear(int month, int year)
-        {
-            if (month < 1 || month > 12)
-            {
-                throw new ArgumentOutOfRangeException(nameof(month), "Month must be between 1 and 12.");
-            }
-
-            if (year < 1)
-            {
-                throw new ArgumentOutOfRangeException(nameof(year), "Year must be a positive value.");
-            }
-
-            Month = month;
-            Year = year;
-        }
-
-        public static MonthYear FromDateTime(DateTime dateTime)
-        {
-            return new MonthYear(dateTime.Month, dateTime.Year);
-        }
-
-        public DateTime ToDateTime()
-        {
-            return new DateTime(Year, Month, 1);
-        }
-
-        public override string ToString()
-        {
-            return ToDateTime().ToString("MMM yyyy");
-        }
-
-        public string ToString(string format)
-        {
-            return ToDateTime().ToString(format);
-        }
-    }
-
     public class FeatureItem
     {
         public string Text { get; set; } = string.Empty;
@@ -100,8 +57,7 @@ namespace ResumeCreator
         public string Position { get; set; } = string.Empty;
         public string? Company { get; set; }
         public string? JobType { get; set; }
-        public MonthYear? StartDate { get; set; }
-        public MonthYear? EndDate { get; set; }
+        public string? DateSpan { get; set; }
         public List<string> DescriptionItems { get; set; } = new List<string>();
 
         public string GetHeader()
@@ -113,39 +69,18 @@ namespace ResumeCreator
 
             return result;
         }
-
-        public string GetDate()
-        {
-            string result = string.Empty;
-
-            if (StartDate != null) result += $"{StartDate}";
-            if (EndDate != null) result += $" - {EndDate}";
-
-            return result;
-        }
     }
 
     public class MilitaryServiceDetails
     {
         public string Position { get; set; } = string.Empty;
         public string Branch { get; set; } = string.Empty;
-        public MonthYear? StartDate { get; set; }
-        public MonthYear? EndDate { get; set; }
+        public string? DateSpan { get; set; }
         public List<string> Description { get; set; } = new List<string>();
 
         public string GetHeader()
         {
             return $"{Position} at {Branch}";
-        }
-
-        public string GetDate()
-        {
-            string result = string.Empty;
-
-            if (StartDate != null) result += StartDate;
-            if (EndDate != null) result += $" - {EndDate}";
-
-            return result;
         }
     }
 
@@ -153,17 +88,6 @@ namespace ResumeCreator
     {
         public string Major { get; set; } = string.Empty;
         public string? Facility { get; set; }
-        public MonthYear? StartDate { get; set; }
-        public MonthYear? EndDate { get; set; }
-
-        public string GetDate()
-        {
-            string result = string.Empty;
-
-            if (StartDate != null) result += StartDate;
-            if (EndDate != null) result += $" - {EndDate}";
-
-            return result;
-        }
+        public string? DateSpan { get; set; }
     }
 }
