@@ -357,13 +357,13 @@ namespace ResumeCreator
                 {
                     column.Item().BorderBottom(1)
                     .Text(Layout.Instance.Headers["Personal Details"])
-                    .FontSize(TitleFontSize);
+                    .FontSize(TitleFontSize).Bold();
                 }
                 else
                 {
                     column.Item().BorderBottom(1).AlignRight()
                     .Text(Layout.Instance.Headers["Personal Details"])
-                    .FontSize(TitleFontSize);
+                    .FontSize(TitleFontSize).Bold();
                 }
                 column.Item().Height(5);
 
@@ -394,13 +394,13 @@ namespace ResumeCreator
                 {
                     column.Item().BorderBottom(1)
                     .Text(Layout.Instance.Headers["Education"])
-                    .FontSize(TitleFontSize);
+                    .FontSize(TitleFontSize).Bold();
                 }
                 else
                 {
                     column.Item().BorderBottom(1).AlignRight()
                     .Text(Layout.Instance.Headers["Education"])
-                    .FontSize(TitleFontSize);
+                    .FontSize(TitleFontSize).Bold();
                 }
                 column.Item().Height(5);
 
@@ -457,12 +457,12 @@ namespace ResumeCreator
                 if (Layout.Instance.TextDirection == TextDirection.LeftToRight)
                 {
                     column.Item().BorderBottom(1)
-                    .Text(Title).FontSize(TitleFontSize);
+                    .Text(Title).FontSize(TitleFontSize).Bold();
                 }
                 else
                 {
                     column.Item().BorderBottom(1).AlignRight()
-                    .Text(Title).FontSize(TitleFontSize);
+                    .Text(Title).FontSize(TitleFontSize).Bold();
                 }
                 column.Item().Height(5);
 
@@ -507,13 +507,13 @@ namespace ResumeCreator
                 {
                     if (Layout.Instance.TextDirection == TextDirection.LeftToRight)
                     {
-                        column.Item().Text(Title).FontSize(TitleFontSize);
+                        column.Item().Text(Title).FontSize(TitleFontSize).SemiBold();
                         column.Item().PaddingBottom(3).Text(SubTitle)
                         .FontSize(SubTitleFontSize).FontColor(Colors.Grey.Darken3);
                     }
                     else
                     {
-                        column.Item().AlignRight().Text(Title).FontSize(TitleFontSize);
+                        column.Item().AlignRight().Text(Title).FontSize(TitleFontSize).SemiBold();
                         column.Item().AlignRight().PaddingBottom(3).Text(SubTitle)
                         .FontSize(SubTitleFontSize).FontColor(Colors.Grey.Darken3);
                     }
@@ -579,7 +579,7 @@ namespace ResumeCreator
             {
                 if (Layout.Instance.TextDirection == TextDirection.LeftToRight)
                 {
-                    column.Item().BorderBottom(1).Text(Title).FontSize(TitleFontSize);
+                    column.Item().BorderBottom(1).Text(Title).FontSize(TitleFontSize).Bold();
 
                     foreach (var item in Items)
                     {
@@ -588,7 +588,7 @@ namespace ResumeCreator
                 }
                 else
                 {
-                    column.Item().BorderBottom(1).AlignRight().Text(Title).FontSize(TitleFontSize);
+                    column.Item().BorderBottom(1).AlignRight().Text(Title).FontSize(TitleFontSize).Bold();
 
                     foreach (var item in Items)
                     {
@@ -621,7 +621,7 @@ namespace ResumeCreator
                     if (!string.IsNullOrEmpty(Text))
                     {
                         column.Item().BorderBottom(1)
-                        .Text(Title).FontSize(TitleFontSize);
+                        .Text(Title).FontSize(TitleFontSize).Bold();
                         column.Item().Height(5);
                     }
 
@@ -632,7 +632,7 @@ namespace ResumeCreator
                     if (!string.IsNullOrEmpty(Text))
                     {
                         column.Item().BorderBottom(1).AlignRight()
-                        .Text(Title).FontSize(TitleFontSize);
+                        .Text(Title).FontSize(TitleFontSize).Bold();
                         column.Item().Height(5);
                     }
 
