@@ -79,7 +79,7 @@ namespace ResumeCreator
 
         public string GetHeader()
         {
-            return $"{Position} at {Branch}";
+            return $"{Position}, {Branch}";
         }
     }
 
