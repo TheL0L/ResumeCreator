@@ -1,6 +1,5 @@
 ﻿using QuestPDF.Fluent;
 using QuestPDF.Infrastructure;
-using QuestPDF.Previewer;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 
@@ -133,13 +132,27 @@ namespace ResumeCreator
 
         static ResumeModel ReadModelJson(string path)
         {
+            // Setup the serializer options
+            var SerializerOptions = new JsonSerializerOptions
+            {
+                Converters = { new JsonStringEnumConverter() },
+                DefaultIgnoreCondition = JsonIgnoreCondition.Never,
+                PropertyNameCaseInsensitive = true,
+                WriteIndented = true
+            };
+
             // Read the JSON string from the file
             string jsonString = File.ReadAllText(path);
 
             // Deserialize the JSON string back into an object
-            ResumeModel model = JsonSerializer.Deserialize<ResumeModel>(jsonString);
+            JsonContainer? data = JsonSerializer.Deserialize<JsonContainer>(jsonString, SerializerOptions);
 
-            return model;
+            if (data?.LayoutData != null )
+            {
+                Layout.Instance = data.LayoutData;
+            }
+            
+            return data?.ResumeModelData;
         }
 
         static void SaveModelJson(string path, ResumeModel model)
@@ -153,8 +166,11 @@ namespace ResumeCreator
                 WriteIndented = true
             };
 
+            // Create an anonymous object with the specified root name
+            var rootObject = new JsonContainer { LayoutData = Layout.Instance, ResumeModelData = model };
+
             // Serialize the object to a JSON string
-            string jsonString = JsonSerializer.Serialize(model, SerializerOptions);
+            string jsonString = JsonSerializer.Serialize(rootObject, SerializerOptions);
 
             // Write the JSON string to a file
             File.WriteAllText(path, jsonString);
@@ -168,5 +184,11 @@ namespace ResumeCreator
             var document = new ResumeDocument(model);
             document.GeneratePdf(filePath);
         }
+    }
+
+    public class JsonContainer
+    {
+        public Layout LayoutData { get; set; }
+        public ResumeModel ResumeModelData { get; set; }
     }
 }

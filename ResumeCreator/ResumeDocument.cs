@@ -19,6 +19,22 @@ namespace ResumeCreator
         }
     }
 
+    public class Layout
+    {
+        public static Layout Instance { get; set; } = new Layout();
+        public TextDirection TextDirection { get; set; } = TextDirection.LeftToRight;
+        public Dictionary<string, string> Headers { get; set; } = new Dictionary<string, string>
+        {
+            ["Personal Details"] = "Personal Info",
+            ["Languages"] = "Languages",
+            ["Education"] = "Education",
+            ["Courses"] = "Courses",
+            ["About Me"] = "Summary",
+            ["Working Experiences"] = "Working Experience",
+            ["Military Service"] = "Military Service"
+        };
+    }
+
     public class ResumeDocument : IDocument
     {
         // constants
@@ -45,11 +61,11 @@ namespace ResumeCreator
             Model = model;
 
             personalInfo = new PersonalBlock(model.FontSizeBlockMajorTitle, model.PersonalInfo);
-            languages = new ContentBlock(model.FontSizeBlockMajorTitle, "Languages", model.Languages);
+            languages = new ContentBlock(model.FontSizeBlockMajorTitle, Layout.Instance.Headers["Languages"], model.Languages);
 
             education = new EducationBlock(model.FontSizeBlockMajorTitle, model.Education);
 
-            aboutMe = new FreeTextBlock(model.FontSizeBlockMajorTitle, "Summary", model.AboutMe);
+            aboutMe = new FreeTextBlock(model.FontSizeBlockMajorTitle, Layout.Instance.Headers["About Me"], model.AboutMe);
 
             foreach (var job in model.WorkExperience)
             {
@@ -72,7 +88,12 @@ namespace ResumeCreator
                 // page setup
                 page.Size(PageSizes.A4);
                 page.PageColor(Colors.White);
-                page.DefaultTextStyle(x => x.FontSize(Model.FontSizeDefault).FontFamily(Model.FontFamily));
+
+                page.DefaultTextStyle(x =>
+                    x.FontSize(Model.FontSizeDefault)
+                    .FontFamily(Model.FontFamily)
+                    .DirectionAuto()
+                );
 
                 // page contents
                 page.Header().Element(ComposeHeader);
@@ -93,7 +114,7 @@ namespace ResumeCreator
 
                 // define 2 segments that corespond to the body proportions:
 
-                if (Model.TextDirection == TextDirection.LeftToRight)
+                if (Layout.Instance.TextDirection == TextDirection.LeftToRight)
                 {
                     // above BodyDetails
                     row.RelativeItem(Model.Proportions.BodyDetails).AlignCenter().AlignMiddle()
@@ -123,7 +144,7 @@ namespace ResumeCreator
 
                 // define 2 segments that corespond to details & main text:
 
-                if (Model.TextDirection == TextDirection.LeftToRight)
+                if (Layout.Instance.TextDirection == TextDirection.LeftToRight)
                 {
                     x.RelativeItem(Model.Proportions.BodyDetails).Element(ComposeBodyDetails);
                     x.RelativeItem(Model.Proportions.BodyMain).Element(ComposeBodyMain);
@@ -173,7 +194,7 @@ namespace ResumeCreator
         {
             if (Model.ExtraCourses.Count == 0) return;
 
-            var extraCourses = new ContentBlock(Model.FontSizeBlockMajorTitle, "Courses", Model.ExtraCourses);
+            var extraCourses = new ContentBlock(Model.FontSizeBlockMajorTitle, Layout.Instance.Headers["Courses"], Model.ExtraCourses);
             container.Component(extraCourses);
         }
 
@@ -207,7 +228,7 @@ namespace ResumeCreator
         private void ComposeWorkSection(IContainer container)
         {
             var block = new ExperienceCollectionBlock(
-                "Working Experience",
+                Layout.Instance.Headers["Working Experiences"],
                 Model.FontSizeBlockMajorTitle,
                 jobs
             );
@@ -220,7 +241,7 @@ namespace ResumeCreator
             if (military.Count == 0) return;
 
             var block = new ExperienceCollectionBlock(
-                "Military Service",
+                Layout.Instance.Headers["Military Service"],
                 Model.FontSizeBlockMajorTitle,
                 military
             );
@@ -240,11 +261,22 @@ namespace ResumeCreator
 
         public void Compose(IContainer container)
         {
-            container.Row(row =>
+            if (Layout.Instance.TextDirection == TextDirection.LeftToRight)
             {
-                row.AutoItem().Text("•");
-                row.RelativeItem().PaddingLeft(3).Text(Text);
-            });
+                container.Row(row =>
+                {
+                    row.AutoItem().Text("•");
+                    row.RelativeItem().PaddingLeft(3).Text(Text);
+                });
+            }
+            else
+            {
+                container.Row(row =>
+                {
+                    row.RelativeItem().AlignRight().PaddingRight(3).Text(Text);
+                    row.AutoItem().AlignRight().Text("•").DirectionFromRightToLeft();
+                });
+            }
         }
     }
 
@@ -261,35 +293,48 @@ namespace ResumeCreator
         {
             container.Row(row =>
             {
-                if (!File.Exists(Feature.Icon))
+                if (Layout.Instance.TextDirection == TextDirection.LeftToRight)
                 {
-                    row.ConstantItem(15);
-                }
-                else if (Feature.Icon.EndsWith(".svg", StringComparison.OrdinalIgnoreCase))
-                {
-                    var svg = new SKSvg();
-                    svg.Load(Feature.Icon);
-
-                    row.ConstantItem(15).AlignMiddle().Svg(svg);
+                    row.ConstantItem(15).AlignMiddle().Element(composeIcon);
+                    row.RelativeItem().PaddingLeft(5).AlignMiddle().Element(composeText);
                 }
                 else
                 {
-                    row.ConstantItem(15).AlignMiddle().Image(Feature.Icon);
-                }
-
-                if (Feature.HyperLink != null)
-                {
-                    row.RelativeItem().PaddingLeft(5)
-                    .AlignMiddle()
-                    .Hyperlink(Feature.HyperLink).Text(Feature.Text);
-                }
-                else
-                {
-                    row.RelativeItem().PaddingLeft(5)
-                    .AlignMiddle()
-                    .Text(Feature.Text);
+                    row.RelativeItem().PaddingRight(5).AlignMiddle().AlignRight().Element(composeText);
+                    row.ConstantItem(15).AlignMiddle().Element(composeIcon);
                 }
             });
+        }
+    
+        private void composeIcon(IContainer container)
+        {
+            if (!File.Exists(Feature.Icon))
+            {
+                return;
+            }
+            else if (Feature.Icon.EndsWith(".svg", StringComparison.OrdinalIgnoreCase))
+            {
+                var svg = new SKSvg();
+                svg.Load(Feature.Icon);
+
+                container.Svg(svg);
+            }
+            else
+            {
+                container.Image(Feature.Icon);
+            }
+        }
+
+        private void composeText(IContainer container)
+        {
+            if (Feature.HyperLink != null)
+            {
+                container.Hyperlink(Feature.HyperLink).Text(Feature.Text);
+            }
+            else
+            {
+                container.Text(Feature.Text);
+            }
         }
     }
 
@@ -300,15 +345,26 @@ namespace ResumeCreator
 
         public PersonalBlock(int titleFontSize, List<FeatureItem> items)
         {
-            Items = items;
             TitleFontSize = titleFontSize;
+            Items = items;
         }
 
         public void Compose(IContainer container)
         {
             container.Column(column =>
             {
-                column.Item().BorderBottom(1).Text("Personal Info").FontSize(TitleFontSize);
+                if (Layout.Instance.TextDirection == TextDirection.LeftToRight)
+                {
+                    column.Item().BorderBottom(1)
+                    .Text(Layout.Instance.Headers["Personal Details"])
+                    .FontSize(TitleFontSize);
+                }
+                else
+                {
+                    column.Item().BorderBottom(1).AlignRight()
+                    .Text(Layout.Instance.Headers["Personal Details"])
+                    .FontSize(TitleFontSize);
+                }
                 column.Item().Height(5);
 
                 foreach (var item in Items)
@@ -334,24 +390,48 @@ namespace ResumeCreator
         {
             container.Column(column =>
             {
-                column.Item().BorderBottom(1).Text("Education").FontSize(TitleFontSize);
+                if (Layout.Instance.TextDirection == TextDirection.LeftToRight)
+                {
+                    column.Item().BorderBottom(1)
+                    .Text(Layout.Instance.Headers["Education"])
+                    .FontSize(TitleFontSize);
+                }
+                else
+                {
+                    column.Item().BorderBottom(1).AlignRight()
+                    .Text(Layout.Instance.Headers["Education"])
+                    .FontSize(TitleFontSize);
+                }
                 column.Item().Height(5);
 
                 foreach (var item in Items)
                 {
-                    column.Item().PaddingLeft(3).Text(item.Major).SemiBold();
-
-                    if (!string.IsNullOrEmpty(item.Facility))
+                    if (Layout.Instance.TextDirection == TextDirection.LeftToRight)
                     {
-                        column.Item().PaddingLeft(3).Text(item.Facility);
+                        column.Item().PaddingLeft(3).Text(item.Major).SemiBold();
+                        if (!string.IsNullOrEmpty(item.Facility))
+                        {
+                            column.Item().PaddingLeft(3).Text(item.Facility);
+                        }
+                        if (!string.IsNullOrEmpty(item.DateSpan))
+                        {
+                            column.Item().PaddingLeft(3).Text(item.DateSpan);
+                        }
+                        column.Item().PaddingBottom(10);
                     }
-
-                    if (!string.IsNullOrEmpty(item.DateSpan))
+                    else
                     {
-                        column.Item().PaddingLeft(3).Text(item.DateSpan);
+                        column.Item().PaddingRight(3).AlignRight().Text(item.Major).SemiBold();
+                        if (!string.IsNullOrEmpty(item.Facility))
+                        {
+                            column.Item().PaddingRight(3).AlignRight().Text(item.Facility);
+                        }
+                        if (!string.IsNullOrEmpty(item.DateSpan))
+                        {
+                            column.Item().PaddingRight(3).AlignRight().Text(item.DateSpan);
+                        }
+                        column.Item().PaddingBottom(10);
                     }
-
-                    column.Item().PaddingBottom(10);
                 }
             });
         }
@@ -374,12 +454,31 @@ namespace ResumeCreator
         {
             container.Column(column =>
             {
-                column.Item().BorderBottom(1).Text(Title).FontSize(TitleFontSize);
+                if (Layout.Instance.TextDirection == TextDirection.LeftToRight)
+                {
+                    column.Item().BorderBottom(1)
+                    .Text(Title).FontSize(TitleFontSize);
+                }
+                else
+                {
+                    column.Item().BorderBottom(1).AlignRight()
+                    .Text(Title).FontSize(TitleFontSize);
+                }
                 column.Item().Height(5);
 
-                foreach (var item in Items)
+                if (Layout.Instance.TextDirection == TextDirection.LeftToRight)
                 {
-                    column.Item().PaddingLeft(3).Text(item);
+                    foreach (var item in Items)
+                    {
+                        column.Item().PaddingLeft(3).Text(item);
+                    }
+                }
+                else
+                {
+                    foreach (var item in Items)
+                    {
+                        column.Item().AlignRight().PaddingRight(3).Text(item);
+                    }
                 }
             });
         }
@@ -406,12 +505,29 @@ namespace ResumeCreator
             {
                 if (!string.IsNullOrEmpty(SubTitle))
                 {
-                    column.Item().Text(Title).FontSize(TitleFontSize);
-                    column.Item().PaddingBottom(3).Text(SubTitle).FontSize(SubTitleFontSize).FontColor(Colors.Grey.Darken3);
+                    if (Layout.Instance.TextDirection == TextDirection.LeftToRight)
+                    {
+                        column.Item().Text(Title).FontSize(TitleFontSize);
+                        column.Item().PaddingBottom(3).Text(SubTitle)
+                        .FontSize(SubTitleFontSize).FontColor(Colors.Grey.Darken3);
+                    }
+                    else
+                    {
+                        column.Item().AlignRight().Text(Title).FontSize(TitleFontSize);
+                        column.Item().AlignRight().PaddingBottom(3).Text(SubTitle)
+                        .FontSize(SubTitleFontSize).FontColor(Colors.Grey.Darken3);
+                    }
                 }
                 else
                 {
-                    column.Item().PaddingBottom(3).Text(Title).FontSize(TitleFontSize);
+                    if (Layout.Instance.TextDirection == TextDirection.LeftToRight)
+                    {
+                        column.Item().PaddingBottom(3).Text(Title).FontSize(TitleFontSize);
+                    }
+                    else
+                    {
+                        column.Item().AlignRight().PaddingBottom(3).Text(Title).FontSize(TitleFontSize);
+                    }
                 }
 
                 foreach (var detail in Details)
@@ -461,11 +577,23 @@ namespace ResumeCreator
         {
             container.Column(column =>
             {
-                column.Item().BorderBottom(1).Text(Title).FontSize(TitleFontSize);
-
-                foreach (var item in Items)
+                if (Layout.Instance.TextDirection == TextDirection.LeftToRight)
                 {
-                    column.Item().Padding(5).Component(item);
+                    column.Item().BorderBottom(1).Text(Title).FontSize(TitleFontSize);
+
+                    foreach (var item in Items)
+                    {
+                        column.Item().Padding(5).Component(item);
+                    }
+                }
+                else
+                {
+                    column.Item().BorderBottom(1).AlignRight().Text(Title).FontSize(TitleFontSize);
+
+                    foreach (var item in Items)
+                    {
+                        column.Item().AlignRight().Padding(5).Component(item);
+                    }
                 }
             });
         }
@@ -488,13 +616,29 @@ namespace ResumeCreator
         {
             container.Column(column =>
             {
-                if (!string.IsNullOrEmpty(Text))
+                if (Layout.Instance.TextDirection == TextDirection.LeftToRight)
                 {
-                    column.Item().BorderBottom(1).Text(Title).FontSize(TitleFontSize);
-                    column.Item().Height(5);
-                }
+                    if (!string.IsNullOrEmpty(Text))
+                    {
+                        column.Item().BorderBottom(1)
+                        .Text(Title).FontSize(TitleFontSize);
+                        column.Item().Height(5);
+                    }
 
-                column.Item().PaddingLeft(3).Text(Text);
+                    column.Item().PaddingLeft(3).Text(Text);
+                }
+                else
+                {
+                    if (!string.IsNullOrEmpty(Text))
+                    {
+                        column.Item().BorderBottom(1).AlignRight()
+                        .Text(Title).FontSize(TitleFontSize);
+                        column.Item().Height(5);
+                    }
+
+                    column.Item().AlignRight().PaddingRight(3).Text(Text);
+                }
+                
             });
         }
     }

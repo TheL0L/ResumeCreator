@@ -22,7 +22,6 @@ namespace ResumeCreator
 
     public class ResumeModel
     {
-        public TextDirection TextDirection { get; set; } = TextDirection.LeftToRight;
         public string FontFamily { get; set; } = "Arial";
         public int FontSizeDefault { get; set; } = 10;
         public int FontSizeBlockSubTitle { get; set; } = 8;
