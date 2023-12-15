@@ -1,5 +1,6 @@
 ﻿using QuestPDF.Fluent;
 using QuestPDF.Infrastructure;
+using System.Text.Encodings.Web;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 
@@ -16,8 +17,10 @@ namespace ResumeCreator
             while (flag)
             {
                 Console.WriteLine("Select an option to procced:");
-                Console.WriteLine("1. Generate an example json & pdf");
-                Console.WriteLine("2. Generate a pdf from existing json");
+                Console.WriteLine("1. Generate an example json & pdf  [English]");
+                Console.WriteLine("2. Generate an example json & pdf  [Hebrew]");
+                Console.WriteLine("");
+                Console.WriteLine("3. Generate a pdf from existing json");
                 var input = Console.ReadKey().KeyChar;
                 Console.Clear();
 
@@ -25,15 +28,27 @@ namespace ResumeCreator
                 {
                     case '1':
                         {
-                            var exampleModel = GenerateExampleJson();
-                            SaveModelJson("example.json", exampleModel);
+                            var exampleModel = GenerateExampleModelEng();
+                            SaveModelJson("example_eng.json", exampleModel, new Layout());
 
-                            GeneratePdf(exampleModel);
+                            GeneratePdf(exampleModel, "example_eng.pdf");
 
                             flag = false;
                             break;
                         }
                     case '2':
+                        {
+                            var exampleModel = GenerateExampleModelHe();
+                            var exampleLayout = GenerateExampleLayoutHe();
+                            SaveModelJson("example_he.json", exampleModel, exampleLayout);
+
+                            Layout.Instance = exampleLayout;
+                            GeneratePdf(exampleModel, "example_he.pdf");
+
+                            flag = false;
+                            break;
+                        }
+                    case '3':
                         {
                             Console.Write("Enter the full path to the .json file: ");
                             var path = Console.ReadLine();
@@ -55,7 +70,7 @@ namespace ResumeCreator
             Console.ReadKey();
         }
 
-        static ResumeModel GenerateExampleJson()
+        static ResumeModel GenerateExampleModelEng()
         {
             return new ResumeModel
             {
@@ -83,13 +98,14 @@ namespace ResumeCreator
                 Languages = new List<string>
                 {
                     "English",
+                    "Hebrew"
                 },
                 Education = new List<EducationDetails>
                 {
                     new EducationDetails
                     {
-                        Major = "Degree of Some Major",
-                        Facility = "Some Facility",
+                        Major = "Degree or Major",
+                        Facility = "Facility",
                         DateSpan = "Jan 2000 - Dec 2004",
                     },
                 },
@@ -105,9 +121,9 @@ namespace ResumeCreator
                 {
                     new WorkExperienceDetails
                     {
-                        Position = "Developer",
-                        Company = "Some Place",
-                        JobType = "Freelance",
+                        Position = "Position",
+                        Company = "Company",
+                        JobType = "Job Type Freelance/Fulltime/etc.",
                         DescriptionItems = new List<string>
                         {
                             "Some details about the position.",
@@ -118,15 +134,108 @@ namespace ResumeCreator
                 {
                     new MilitaryServiceDetails
                     {
-                        Position = "Technician",
-                        Branch = "Tech Corps",
-                        DateSpan = "Jan 2000 - Dec 2003",
+                        Position = "Role",
+                        Branch = "Military Branch",
+                        DateSpan = "Recruitment date - Release Date",
                         DescriptionItems = new List<string>
                         {
                             "Some details about the service period.",
                         }
                     }
                 },
+            };
+        }
+
+        static ResumeModel GenerateExampleModelHe()
+        {
+            return new ResumeModel
+            {
+                FullName = "שם מלא",
+                PersonalInfo = new List<FeatureItem>
+                {
+                    new FeatureItem
+                    {
+                        Text = "+000 00 000 0000",
+                        Icon = "Icons/phone.svg"
+                    },
+                    new FeatureItem
+                    {
+                        Text = "email@domain.com",
+                        HyperLink = "mailto:email@domain.com",
+                        Icon = "Icons/email.svg"
+                    },
+                    new FeatureItem
+                    {
+                        Text = "github",
+                        HyperLink = "https://github.com/",
+                        Icon = "Icons/github.svg"
+                    }
+                },
+                Languages = new List<string>
+                {
+                    "אנגלית",
+                    "עברית"
+                },
+                Education = new List<EducationDetails>
+                {
+                    new EducationDetails
+                    {
+                        Major = "תואר או התמחות",
+                        Facility = "מוסד",
+                        DateSpan = "01.2000 - 12.2004",
+                    },
+                },
+                ExtraCourses = new List<string>
+                {
+                    "קורס 1",
+                    "קורס 2",
+                    "קורס 3",
+                },
+
+                AboutMe = "תקציר אישי נמצא כאן.",
+                WorkExperience = new List<WorkExperienceDetails>
+                {
+                    new WorkExperienceDetails
+                    {
+                        Position = "משרה",
+                        Company = "חברה",
+                        JobType = "סוג משרה",
+                        DescriptionItems = new List<string>
+                        {
+                            "פרטים על המשרה.",
+                        },
+                    },
+                },
+                MilitaryService = new List<MilitaryServiceDetails>
+                {
+                    new MilitaryServiceDetails
+                    {
+                        Position = "תפקיד",
+                        Branch = "ענף צבאי",
+                        DateSpan = "תאריך גיוס - תאריך שיחרור",
+                        DescriptionItems = new List<string>
+                        {
+                            "פרטים על תקופת השירות.",
+                        }
+                    }
+                },
+            };
+        }
+
+        static Layout GenerateExampleLayoutHe()
+        {
+            return new Layout
+            {
+                TextDirection = TextDirection.RightToLeft,
+                Headers = {
+                    ["Personal Details"] = "מידע אישי",
+                    ["Languages"] = "שפות",
+                    ["Education"] = "השכלה",
+                    ["Courses"] = "קורסים",
+                    ["About Me"] = "תקציר",
+                    ["Working Experiences"] = "נסיון תעשוקתי",
+                    ["Military Service"] = "שירות צבאי"
+                }
             };
         }
 
@@ -137,6 +246,7 @@ namespace ResumeCreator
             {
                 Converters = { new JsonStringEnumConverter() },
                 DefaultIgnoreCondition = JsonIgnoreCondition.Never,
+                Encoder = JavaScriptEncoder.UnsafeRelaxedJsonEscaping,
                 PropertyNameCaseInsensitive = true,
                 WriteIndented = true
             };
@@ -155,19 +265,20 @@ namespace ResumeCreator
             return data?.ResumeModelData;
         }
 
-        static void SaveModelJson(string path, ResumeModel model)
+        static void SaveModelJson(string path, ResumeModel model, Layout layout)
         {
             // Setup the serializer options
             var SerializerOptions = new JsonSerializerOptions
             {
                 Converters = { new JsonStringEnumConverter() },
                 DefaultIgnoreCondition = JsonIgnoreCondition.Never,
+                Encoder = JavaScriptEncoder.UnsafeRelaxedJsonEscaping,
                 PropertyNameCaseInsensitive = true,
                 WriteIndented = true
             };
 
             // Create an anonymous object with the specified root name
-            var rootObject = new JsonContainer { LayoutData = Layout.Instance, ResumeModelData = model };
+            var rootObject = new JsonContainer { LayoutData = layout, ResumeModelData = model };
 
             // Serialize the object to a JSON string
             string jsonString = JsonSerializer.Serialize(rootObject, SerializerOptions);
@@ -176,10 +287,10 @@ namespace ResumeCreator
             File.WriteAllText(path, jsonString);
         }
 
-        static void GeneratePdf(ResumeModel model)
+        static void GeneratePdf(ResumeModel model, string? path = null)
         {
             var now = DateTime.Now.ToString("dd_MMM_yyyy__hh_mm");
-            var filePath = $"resume_{now}.pdf";
+            var filePath = string.IsNullOrEmpty(path) ? $"resume_{now}.pdf" : path;
 
             var document = new ResumeDocument(model);
             document.GeneratePdf(filePath);
