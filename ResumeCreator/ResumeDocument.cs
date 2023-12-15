@@ -273,7 +273,7 @@ namespace ResumeCreator
             {
                 container.Row(row =>
                 {
-                    row.RelativeItem().AlignRight().PaddingRight(3).Text(Text);
+                    row.RelativeItem().PaddingRight(3).AlignRight().Text(Text);
                     row.AutoItem().AlignRight().Text("•").DirectionFromRightToLeft();
                 });
             }
@@ -477,7 +477,7 @@ namespace ResumeCreator
                 {
                     foreach (var item in Items)
                     {
-                        column.Item().AlignRight().PaddingRight(3).Text(item);
+                        column.Item().PaddingRight(3).AlignRight().Text(item);
                     }
                 }
             });
@@ -514,7 +514,7 @@ namespace ResumeCreator
                     else
                     {
                         column.Item().AlignRight().Text(Title).FontSize(TitleFontSize).SemiBold();
-                        column.Item().AlignRight().PaddingBottom(3).Text(SubTitle)
+                        column.Item().PaddingBottom(3).AlignRight().Text(SubTitle)
                         .FontSize(SubTitleFontSize).FontColor(Colors.Grey.Darken3);
                     }
                 }
@@ -526,7 +526,7 @@ namespace ResumeCreator
                     }
                     else
                     {
-                        column.Item().AlignRight().PaddingBottom(3).Text(Title).FontSize(TitleFontSize);
+                        column.Item().PaddingBottom(3).AlignRight().Text(Title).FontSize(TitleFontSize);
                     }
                 }
 
@@ -592,7 +592,7 @@ namespace ResumeCreator
 
                     foreach (var item in Items)
                     {
-                        column.Item().AlignRight().Padding(5).Component(item);
+                        column.Item().Padding(5).AlignRight().Component(item);
                     }
                 }
             });
@@ -636,7 +636,7 @@ namespace ResumeCreator
                         column.Item().Height(5);
                     }
 
-                    column.Item().AlignRight().PaddingRight(3).Text(Text);
+                    column.Item().PaddingRight(3).AlignRight().Text(Text);
                 }
                 
             });
