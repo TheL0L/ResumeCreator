@@ -212,7 +212,7 @@ namespace ResumeCreator
                     {
                         Position = "תפקיד",
                         Branch = "ענף צבאי",
-                        DateSpan = "תאריך גיוס - תאריך שיחרור",
+                        DateSpan = "תאריך גיוס - תאריך שחרור",
                         DescriptionItems = new List<string>
                         {
                             "פרטים על תקופת השירות.",
@@ -233,7 +233,7 @@ namespace ResumeCreator
                     ["Education"] = "השכלה",
                     ["Courses"] = "קורסים",
                     ["About Me"] = "תקציר",
-                    ["Working Experiences"] = "נסיון תעשוקתי",
+                    ["Working Experiences"] = "ניסיון תעסוקתי",
                     ["Military Service"] = "שירות צבאי"
                 }
             };
