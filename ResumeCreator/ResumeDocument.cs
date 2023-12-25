@@ -210,17 +210,26 @@ namespace ResumeCreator
 
                 // add content blocks:
 
-                column.Item()
-                .PaddingHorizontal(_blocksPadding_BodyMain)
-                .Component(aboutMe);
+                if (!string.IsNullOrEmpty(Model.AboutMe))
+                {
+                    column.Item()
+                    .PaddingHorizontal(_blocksPadding_BodyMain)
+                    .Component(aboutMe);
+                }
 
-                column.Item()
-                .PaddingHorizontal(_blocksPadding_BodyMain)
-                .Element(ComposeWorkSection);
+                if (jobs.Count > 0)
+                {
+                    column.Item()
+                    .PaddingHorizontal(_blocksPadding_BodyMain)
+                    .Element(ComposeWorkSection);
+                }
 
-                column.Item()
-                .PaddingHorizontal(_blocksPadding_BodyMain)
-                .Element(ComposeMilitarySection);
+                if (military.Count > 0)
+                {
+                    column.Item()
+                    .PaddingHorizontal(_blocksPadding_BodyMain)
+                    .Element(ComposeMilitarySection);
+                }
 
             });
         }
